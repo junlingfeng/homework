@@ -2,7 +2,6 @@ package cn.gson.crm.service;
 
 import cn.gson.crm.controller.system.PasswordUtil;
 import cn.gson.crm.model.domain.User;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -12,7 +11,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class UserService {
 
-    private Map<String, User> data = new ConcurrentHashMap<>();
+    private static final Map<String, User> data = new ConcurrentHashMap<>();
+
+    static {
+        data.put("default", new User() {{
+            setName("test");
+            setPassword(PasswordUtil.encode("test123"));
+        }});
+    }
 
     public boolean createUser(User user) {
         user.setId(UUID.randomUUID().toString());

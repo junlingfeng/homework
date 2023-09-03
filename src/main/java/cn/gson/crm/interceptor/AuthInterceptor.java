@@ -1,9 +1,10 @@
 package cn.gson.crm.interceptor;
 
-import cn.gson.crm.common.ApiResult;
 import cn.gson.crm.common.ApiResultEnum;
 import cn.gson.crm.controller.system.RoleController;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,7 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,6 +25,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     public static final String TOKEN = "TOKEN";
     public static final int TWO_HOUR = 2 * 3600 * 1000;
+    private Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
+
+    private static final Set<String> WHITE_LIST = new HashSet<>(Arrays.asList(
+            "/api/user/create",
+            "/api/role/",
+            "/api/role/add"
+    ));
 
     @Override
     @SuppressWarnings("unchecked")
@@ -33,6 +42,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (hm.getBean() instanceof RoleController) {
             //App里面的就不做权限控制了，相当于公共的，省的写一个就要配置一个例外
             //超管也直接跳过权限
+            return true;
+        }
+
+        String uri = request.getRequestURI();
+        logger.info(uri);
+        if (WHITE_LIST.contains(uri)) {
+            logger.info("uri {} in whitelist.", uri);
             return true;
         }
 

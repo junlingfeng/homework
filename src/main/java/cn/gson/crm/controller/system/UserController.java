@@ -5,7 +5,6 @@ import cn.gson.crm.common.ApiResultEnum;
 import cn.gson.crm.model.domain.User;
 import cn.gson.crm.service.RoleService;
 import cn.gson.crm.service.UserService;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,7 @@ public class UserController {
         return ApiResult.success(token);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ApiResult createUser(@RequestBody User user) {
         userService.createUser(user);
         return ApiResult.success();
